@@ -1,6 +1,5 @@
 import os
 import json
-import time
 from io import BytesIO
 from PIL import Image
 from pydantic import BaseModel, Field
@@ -98,8 +97,8 @@ def impact_metrics(request):
 @parser_classes([MultiPartParser, FormParser])
 def scan_waste_image(request):
     """
-    Accepts an uploaded image file ('image'), discovers available Gemini models on the API key,
-    runs vision analysis with automatic fallback on 503 spikes, and returns structured JSON.
+    Accepts an uploaded image file ('image'), downscales it for fast inference,
+    and runs Gemini Vision with minimal thinking latency and automatic model fallback.
     """
     image_file = request.FILES.get('image')
     if not image_file:
@@ -111,6 +110,9 @@ def scan_waste_image(request):
 
     try:
         pil_image = Image.open(BytesIO(image_file.read()))
+        if pil_image.mode not in ('RGB', 'L'):
+            pil_image = pil_image.convert('RGB')
+        pil_image.thumbnail((768, 768))
     except Exception as e:
         return Response({'error': f'Invalid image file: {str(e)}'}, status=status.HTTP_400_BAD_REQUEST)
 
@@ -123,25 +125,12 @@ def scan_waste_image(request):
         "Estimate the total weight in kg and provide practical sorting/handling notes."
     )
 
-    try:
-        available_models = [
-            m.name.replace('models/', '')
-            for m in client.models.list()
-            if 'generateContent' in (m.supported_actions or [])
-            and ('flash' in m.name.lower() or 'pro' in m.name.lower())
-            and 'tts' not in m.name.lower()
-            and 'image' not in m.name.lower()
-        ]
-    except Exception as e:
-        return Response({'error': f'Failed to list Gemini models: {str(e)}'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-
-    # Prefer gemini-3.8-flash first, then any other flash/pro models enabled on your key
-    models_to_try = sorted(
-        available_models,
-        key=lambda name: (0 if name == 'gemini-3.8-flash' else 1 if 'flash' in name else 2)
-    )[:5]
-
-    print(f"DEBUG: Trying models in order -> {models_to_try}")
+    models_to_try = [
+        'gemini-3.1-flash-lite',
+        'gemini-3.5-flash-lite',
+        'gemini-3.5-flash',
+        'gemini-3.8-flash',
+    ]
 
     last_error = None
     for model_name in models_to_try:
@@ -153,6 +142,7 @@ def scan_waste_image(request):
                     response_mime_type='application/json',
                     response_schema=WasteScanSchema,
                     temperature=0.2,
+                    thinking_config=types.ThinkingConfig(thinking_level='MINIMAL'),
                 ),
             )
             scan_result = json.loads(response.text)
@@ -160,14 +150,13 @@ def scan_waste_image(request):
             return Response(scan_result, status=status.HTTP_200_OK)
         except Exception as e:
             last_error = f"[{model_name}] {str(e)}"
-            print(f"DEBUG SCAN ERROR: {last_error}")
-            time.sleep(1)
             continue
 
     return Response(
         {'error': f'AI scan failed across models {models_to_try}. Last error: {last_error}'},
         status=status.HTTP_503_SERVICE_UNAVAILABLE
     )
+
 
 @api_view(['GET'])
 def surplus_forecast(request):
