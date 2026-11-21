@@ -20,11 +20,17 @@
 
 ## 📸 Platform Screenshots
 
-### Command Center & AI Vision Scanner
-![WastePulse Command Center & AI Vision Scanner](docs/screenshots/dashboard-overview.png)
+### 1. Command Center Dashboard & 7-Day Surplus Forecast
+![WastePulse Command Center Dashboard](<img width="1917" height="910" alt="Screenshot 2026-11-21 213641" src="https://github.com/user-attachments/assets/6a5ee1a1-e49d-4de6-8b6b-b830eefbd5b9" />
+)
 
-### Live Atomic Surplus Marketplace
-![WastePulse Live Surplus Marketplace](docs/screenshots/marketplace-batches.png)
+### 2. AI Vision Contamination & Weight Scanner
+![WastePulse AI Vision Contamination Scanner](<img width="650" height="467" alt="Screenshot 2026-11-21 213821" src="https://github.com/user-attachments/assets/a6b45785-4615-4fb0-ac0e-783aea426c3c" />
+)
+
+### 3. Live Atomic Surplus Marketplace
+![WastePulse Live Surplus Marketplace](<img width="1212" height="287" alt="Screenshot 2026-11-21 214342" src="https://github.com/user-attachments/assets/42479db8-32a6-4c34-b973-fbb08aac770a" />
+)
 
 ---
 
