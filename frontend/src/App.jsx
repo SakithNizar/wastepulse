@@ -40,15 +40,15 @@ export default function App() {
   const [batches, setBatches] = useState([]);
   const [forecast, setForecast] = useState(null);
   const [businessType, setBusinessType] = useState('SUPERMARKET');
-  const [collectorName, setCollectorName] = useState('Colombo EcoRecycler');
+  const [collectorName, setCollectorName] = useState('');
 
   // Scanner state
   const [selectedFile, setSelectedFile] = useState(null);
   const [previewUrl, setPreviewUrl] = useState(null);
   const [scanning, setScanning] = useState(false);
   const [scanResult, setScanResult] = useState(null);
-  const [donorName, setDonorName] = useState('Cargills Food City - Boralesgamuwa');
-  const [locationText, setLocationText] = useState('Boralesgamuwa, Western Province');
+  const [donorName, setDonorName] = useState('');
+  const [locationText, setLocationText] = useState('');
   const [publishing, setPublishing] = useState(false);
 
   // Feedback banner
