@@ -119,7 +119,7 @@ export default function App() {
         weight_kg: scanResult.estimated_weight_kg,
         contamination_score: scanResult.contamination_score,
         donor_name: donorName,
-        location: locationText,
+        location_name: locationText,
         notes: scanResult.ai_notes,
       });
       showToast('success', 'Verified batch published to live marketplace!');
@@ -481,9 +481,6 @@ export default function App() {
           <div className="flex items-center justify-between">
             <div>
               <h2 className="text-lg font-semibold text-white">Live Surplus Marketplace</h2>
-              <p className="text-xs text-slate-400">
-                Protected by PostgreSQL row-level locking (`select_for_update`) against double-claims
-              </p>
             </div>
             <span className="text-xs text-slate-400">{batches.length} total batches</span>
           </div>
@@ -526,7 +523,7 @@ export default function App() {
                       <div className="text-xs text-slate-400 space-y-1">
                         <p className="flex items-center gap-1.5">
                           <MapPin className="w-3.5 h-3.5 text-slate-500" />
-                          {batch.donor_name} • {batch.location}
+                          {batch.donor_name} • {batch.location_name || batch.location}
                         </p>
                         <p>
                           Weight: <strong className="text-slate-200">{batch.weight_kg} kg</strong> •
