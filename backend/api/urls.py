@@ -6,4 +6,5 @@ urlpatterns = [
     path('batches/<int:pk>/claim/', views.claim_batch, name='batch-claim'),
     path('metrics/', views.impact_metrics, name='impact-metrics'),
     path('scan/', views.scan_waste_image, name='scan-waste-image'),
+    path('forecast/', views.surplus_forecast, name='surplus-forecast'),
 ]

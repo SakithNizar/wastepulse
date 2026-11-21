@@ -15,6 +15,7 @@ from rest_framework.parsers import MultiPartParser, FormParser
 from rest_framework.response import Response
 from .models import WasteBatch
 from .serializers import WasteBatchSerializer
+from .ml_forecast import train_and_predict_surplus
 
 
 class WasteScanSchema(BaseModel):
@@ -167,3 +168,19 @@ def scan_waste_image(request):
         {'error': f'AI scan failed across models {models_to_try}. Last error: {last_error}'},
         status=status.HTTP_503_SERVICE_UNAVAILABLE
     )
+
+@api_view(['GET'])
+def surplus_forecast(request):
+    business_type = request.query_params.get('business_type', 'SUPERMARKET')
+    try:
+        days = min(max(int(request.query_params.get('days', 7)), 1), 14)
+    except ValueError:
+        days = 7
+
+    live_count = WasteBatch.objects.count()
+    forecast_data = train_and_predict_surplus(
+        business_type=business_type,
+        days=days,
+        live_batch_count=live_count,
+    )
+    return Response(forecast_data, status=status.HTTP_200_OK)
