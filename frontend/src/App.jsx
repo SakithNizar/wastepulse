@@ -468,11 +468,6 @@ export default function App() {
                 </>
               )}
             </div>
-
-            <p className="text-[11px] text-slate-500 border-t border-slate-800 pt-3">
-              Model: {forecast?.model_algorithm || 'RidgeSurplusRegressor'} • Forecasts help
-              collectors pre-allocate trucks before peak commercial surplus days.
-            </p>
           </div>
         </section>
 
